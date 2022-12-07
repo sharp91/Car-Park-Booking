@@ -19,7 +19,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
                 <img src="/static/images/logo_fs.jpg" alt="" width="30" height="30"
                     class="d-inline-block align-text-top">
                 Car Parking
@@ -38,11 +38,15 @@
                             Admin
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewOwner"
+                            <!-- <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewOwner"
                                     data-bs-whatever="@getbootstrap">Add Owner</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewSpace"
-                                    data-bs-whatever="@getbootstrap">Add Space</a></li>
+                                    data-bs-whatever="@getbootstrap">Add Space</a></li> -->
                             <li><a class="dropdown-item" href="{{ url_for('reset') }}">Reset</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -53,6 +57,17 @@
     <main>
         <div class="container-fluid">
 
+
+
+
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+
+            {% block content %}
+            {% endblock %}
 
             <!-- Add new owner pop-up -->
             <div class="modal fade" id="addNewOwner" tabindex="-1" aria-labelledby="addNewOwner" aria-hidden="true">
@@ -68,8 +83,10 @@
                                     <label for="new-owner-name" class="col-form-label">Name:</label>
                                     <input type="text" class="form-control" id="new-owner-name" name="new-owner-name">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Add</button>
 
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -107,15 +124,6 @@
                     </div>
                 </div>
             </div>
-
-            {% for category, message in get_flashed_messages(with_categories=True) %}
-            <div class="alert alert-{{ category }}" role="alert">
-                {{ message }}
-            </div>
-            {% endfor %}
-
-            {% block content %}
-            {% endblock %}
         </div>
 
     </main>

@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-import os
-import json
 from datetime import datetime
 
 app = Flask(__name__)
@@ -11,6 +9,7 @@ app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
 
 class Owner(db.Model):
     __tablename__ = "owners"
@@ -33,9 +32,11 @@ class ParkingSpace(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("owners.id"))
     owner = relationship("Owner", back_populates="parking_spaces")
 
+
 db.create_all()
 
 days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
+
 
 @app.route("/")
 def home():
@@ -46,6 +47,13 @@ def home():
     owners = Owner.query.all()
     spaces = ParkingSpace.query.all()
     return render_template("index.html", spaces=spaces, owners=owners, days=days, current_day=current_day)
+
+
+@app.route("/admin-panel")
+def admin_panel():
+    owners = Owner.query.all()
+    spaces = ParkingSpace.query.all()
+    return render_template("admin.html", spaces=spaces, owners=owners, days=days)
 
 
 @app.route("/claim", methods=["GET", "POST"])
@@ -59,9 +67,10 @@ def claim_space():
             space = ParkingSpace.query.get(id)
             setattr(space, day, request.form["name"])
             db.session.commit()
-            flash(f"{request.form['name']} has claimed space {id} on {day.capitalize()}", "success")
+            flash(
+                f"{request.form['name']} has claimed space {id} on {day.capitalize()}", "success")
 
-    return redirect(url_for("home"))
+    return redirect(url_for("home", day=day))
 
 
 @app.route("/release")
@@ -69,17 +78,18 @@ def release_space():
 
     day = request.args.get("day")
     id = request.args.get("id")
-    
+
     if day and id:
         space = ParkingSpace.query.get(id)
         setattr(space, day, "")
         db.session.commit()
         flash(
-            f"You have made space {id} on {day.capitalize()} avaliable", "success")
+            f"You have made space {id} avaliable on {day.capitalize()}", "success")
 
     return redirect(url_for("home", day=day))
 
-@app.route("/addowner", methods=["GET", "POST"])
+
+@app.route("/add-owner", methods=["GET", "POST"])
 def add_owner():
 
     if request.method == 'POST':
@@ -91,26 +101,95 @@ def add_owner():
         db.session.add(new_owner)
         db.session.commit()
         flash(f"{new_name} added as a new owner.", "success")
-    return redirect(url_for("home"))
+    return redirect(url_for("admin_panel"))
 
-@app.route("/addspace", methods=["GET", "POST"])
+@app.route("/edit-owner", methods=["GET", "POST"])
+def edit_owner():
+
+    id = request.args.get("id")
+    if request.method == 'POST':
+        owner = Owner.query.get(id)
+        current_name = owner.name
+        new_name = request.form["new-owner-name"]
+        setattr(owner, "name", new_name)
+        db.session.commit()
+        flash(f"Successfully updated owner name from {current_name} to {new_name}.", "success")
+    return redirect(url_for("admin_panel"))
+
+
+@app.route("/delete-owner", methods=["GET", "POST"])
+def del_owner():
+    id = request.args.get("id")
+    if id:
+        owner = Owner.query.get(id)
+        db.session.delete(owner)
+        db.session.commit()
+        flash(f"Removed {owner.name} as an owner.", "success")
+        return redirect(url_for("admin_panel"))
+
+    flash(f"Owner does not exist.", "danger")
+    return redirect(url_for("admin_panel"))
+
+
+@app.route("/edit-space", methods=["GET", "POST"])
+def edit_space():
+
+    id = request.args.get("id")
+    if request.method == 'POST':
+        space = ParkingSpace.query.get(id)
+        old_name = space.owner.name
+        new_owner = Owner.query.filter_by(name=request.form.get("owner_select")).first()
+        setattr(space, "owner", new_owner)
+        db.session.commit()
+        flash(f"Successfully updated owner of space {id} from {old_name} to {new_owner.name}.", "success")
+    return redirect(url_for("admin_panel"))
+
+
+
+@app.route("/delete-space", methods=["GET", "POST"])
+def del_space():
+    id = request.args.get("id")
+    if id:
+        space = ParkingSpace.query.get(id)
+        flash(
+            f"Removed parking space {id}, which was owned by {space.owner.name}.", "success")
+        db.session.delete(space)
+        db.session.commit()
+        return redirect(url_for("admin_panel"))
+
+    flash(f"Owner does not exist.", "danger")
+    return redirect(url_for("admin_panel"))
+
+
+@app.route("/add-space", methods=["GET", "POST"])
 def add_space():
 
     if request.method == 'POST':
+
         owner_name = request.form.get("owner_select")
         space_owner = Owner.query.filter_by(name=owner_name).first()
-        new_space = ParkingSpace(
-            monday=owner_name,
-            tuesday=owner_name,
-            wednesday=owner_name,
-            thursday=owner_name,
-            friday=owner_name,
-            owner=space_owner,
-        )
-        db.session.add(new_space)
-        db.session.commit()
-        flash(f"New space added with {owner_name} as owner.", "success")
-    return redirect(url_for("home"))
+
+        if space_owner:
+            new_space = ParkingSpace(
+                monday=owner_name,
+                tuesday=owner_name,
+                wednesday=owner_name,
+                thursday=owner_name,
+                friday=owner_name,
+                owner=space_owner,
+            )
+            db.session.add(new_space)
+            db.session.commit()
+
+            flash(f"New space added with {owner_name} as owner.", "success")
+            return redirect(url_for("admin_panel"))
+
+        else:
+
+            flash(f"Select an owner from the drop down list.", "danger")
+            return redirect(url_for("admin_panel"))
+
+    return redirect(url_for("admin_panel"))
 
 
 @app.route("/reset")
@@ -122,7 +201,7 @@ def reset():
             setattr(space, day, space.owner.name)
     db.session.commit()
     flash(
-        f"All spaces reset", "success")
+        f"All spaces reset.", "success")
 
     return redirect(url_for("home"))
 

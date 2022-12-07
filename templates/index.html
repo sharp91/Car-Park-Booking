@@ -40,14 +40,14 @@
                         class="btn btn-primary">Release</button></a>
             </td>
         {% else %}
-            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nameCollector"
+            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#name{{ space.id }}"
                     data-bs-whatever="@getbootstrap">Claim</button></td>
 
-            <div class="modal fade" id="nameCollector" tabindex="-1" aria-labelledby="nameCollector" aria-hidden="true">
+            <div class="modal fade" id="name{{ space.id }}" tabindex="-1" aria-labelledby="name{{ space.id }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="nameCollectorLabel">What's your name?</h1>
+                            <h1 class="modal-title fs-5" id="name{{ space.id }}Label">What's your name?</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">

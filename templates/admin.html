@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container px-4 text-center">
+    <div class="row gx-5 gy-2">
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+            <h1>Owners</h1>
+            <div class="card">
+                <div class="card-header">
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">Name</div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for owner in owners %}
+                    <li class="list-group-item">
+                        <div class="container text-center">
+                            <div class="row">
+                                <div class="col">
+                                    {{ owner.name }}
+                                </div>
+                                <div class="col">
+                                    <a href="{{ url_for('del_owner', id=owner.id) }}"><button
+                                            class="btn btn-secondary">Remove</button></a>
+
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#editOwner-{{owner.id}}"
+                                        data-bs-whatever="@getbootstrap">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+            <br>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewOwner"
+                data-bs-whatever="@getbootstrap">Add Owner</button>
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+            <h1>Spaces</h1>
+            <div class="card">
+                <div class="card-header">
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">ID</div>
+                            <div class="col">Owner</div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for space in spaces %}
+                    <li class="list-group-item">
+                        <div class="container text-center">
+                            <div class="row">
+                                <div class="col">
+                                    {{ space.id }}
+                                </div>
+                                <div class="col">
+                                    {{ space.owner.name }}
+                                </div>
+                                <div class="col">
+                                    <a href="{{ url_for('del_space', id=space.id) }}"><button
+                                            class="btn btn-secondary">Remove</button></a>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#editSpace-{{space.id}}"
+                                        data-bs-whatever="@getbootstrap">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    {% endfor %}
+                </ul>
+
+            </div>
+            <br>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewSpace"
+                data-bs-whatever="@getbootstrap">Add Space</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit owner pop-up -->
+{% for owner in owners %}
+<div class="modal fade" id="editOwner-{{owner.id}}" tabindex="-1" aria-labelledby="editOwner-{{owner.id}}"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editOwner-{{owner.id}}Label">Change owner's name.</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('edit_owner', id=owner.id) }}" method="post">
+                    <div class="mb-3">
+                        <label for="new-owner-name" class="col-form-label">New name:</label>
+                        <input type="text" class="form-control" id="new-owner-name" name="new-owner-name">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for space in spaces %}
+<div class="modal fade" id="editSpace-{{ space.id }}" tabindex="-1" aria-labelledby="editSpace-{{ space.id }}"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editSpace-{{ space.id }}Label">Change the owner of space {{ space.id }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('edit_space', id=space.id) }}" method="post">
+                    <div class="mb-3">
+                        <p>If owner is not listed, please add new.</p>
+                        <select class="form-select" aria-label="Default select example" name="owner_select">
+                            <option selected>Who is the new owner?</option>
+
+                            {% for owner in owners %}
+                            <option value="{{ owner.name }}">{{ owner.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                            data-bs-target="#addNewOwner" data-bs-whatever="@getbootstrap">Add
+                            Owner</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
