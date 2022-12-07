@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Fenton Stephens Car Parking</title>
+    <!-- BS CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!-- BS JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+    <!-- CSS Stylsheets -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">
+                <img src="/static/images/logo_fs.jpg" alt="" width="30" height="30"
+                    class="d-inline-block align-text-top">
+                Car Parking
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewOwner"
+                                    data-bs-whatever="@getbootstrap">Add Owner</a></li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewSpace"
+                                    data-bs-whatever="@getbootstrap">Add Space</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('reset') }}">Reset</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container-fluid">
+
+
+            <!-- Add new owner pop-up -->
+            <div class="modal fade" id="addNewOwner" tabindex="-1" aria-labelledby="addNewOwner" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addNewOwnerLabel">Add a new owner.</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('add_owner') }}" method="post">
+                                <div class="mb-3">
+                                    <label for="new-owner-name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="new-owner-name" name="new-owner-name">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add</button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add new parking space pop-up -->
+            <div class="modal fade" id="addNewSpace" tabindex="-1" aria-labelledby="addNewSpace" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addNewSpaceLabel">Add a new parking space.</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('add_space') }}" method="post">
+                                <div class="mb-3">
+                                    <p>If owner is not listed, please add new.</p>
+                                    <select class="form-select" aria-label="Default select example" name="owner_select">
+                                        <option selected>Who owns this space?</option>
+
+                                        {% for owner in owners %}
+                                        <option value="{{ owner.name }}">{{ owner.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#addNewOwner" data-bs-whatever="@getbootstrap">Add
+                                        Owner</button>
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </main>
+</body>
+
+</html>

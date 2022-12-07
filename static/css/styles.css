@@ -1,0 +1,11 @@
+.container-fluid {
+    padding: 5% 15%;
+}
+
+.navbar .container-fluid {
+    padding: 0% 15%;
+}
+
+.parking-graphic {
+    width: 100px;
+}

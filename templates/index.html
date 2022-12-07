@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<ul class="nav nav-tabs">
+    {% for day in days %}
+    {% if day == current_day %}
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('home', day=day) }}">{{ day.capitalize() }}</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('home', day=day) }}">{{ day.capitalize() }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Parking Space</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Occupied by</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for space in spaces %}
+        {% if space[current_day] != "" %}
+        <tr>
+        {% else %}
+        <tr class="table-success">
+        {% endif %}
+            <th scope="row">{{ space.id }}</th>
+            <td>{{ space.owner.name }}</td>
+            <td>{{ space[current_day] }}</td>
+        {% if space[current_day] != "" %}
+            <td>
+                <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"><button
+                        class="btn btn-primary">Release</button></a>
+            </td>
+        {% else %}
+            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nameCollector"
+                    data-bs-whatever="@getbootstrap">Claim</button></td>
+
+            <div class="modal fade" id="nameCollector" tabindex="-1" aria-labelledby="nameCollector" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="nameCollectorLabel">What's your name?</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('claim_space', id=space.id, day=current_day) }}" method="post">
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="recipient-name" name="name">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

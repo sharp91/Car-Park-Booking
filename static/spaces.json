@@ -1,0 +1,43 @@
+[
+    {
+        "id": 1,
+        "owner": "Simon",
+        "status": "In Use",
+    },
+    {
+        "id": 2,
+        "owner": "Amy",
+        "status": "In Use",
+    },
+    {
+        "id": 3,
+        "owner": "Nyto",
+        "status": "In Use",
+    },
+    {
+        "id": 4,
+        "owner": "Cam",
+        "status": "In Use",
+    },
+    {
+        "id": 5,
+        "owner": "Joey",
+        "status": "In Use",
+    },
+    {
+        "id": 6,
+        "owner": "Rishi/Katie",
+        "status": "In Use",
+    },
+    {
+        "id": 7,
+        "owner": "Ruth",
+        "status": "In Use",
+    },
+    {
+        "id": 8,
+        "owner": "Lucy",
+        "status": "In Use",
+    }
+]
+
