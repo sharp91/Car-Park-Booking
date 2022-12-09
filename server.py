@@ -98,9 +98,24 @@ def add_owner():
             name=new_name,
             status="active",
         )
+
         db.session.add(new_owner)
         db.session.commit()
         flash(f"{new_name} added as a new owner.", "success")
+
+        if request.form.get('createspace'):
+            new_space = ParkingSpace(
+                    monday=new_name,
+                    tuesday=new_name,
+                    wednesday=new_name,
+                    thursday=new_name,
+                    friday=new_name,
+                    owner=new_owner,
+                )
+            db.session.add(new_space)
+            db.session.commit()
+            flash(f"Created new space for {new_name}.", "success")
+        
     return redirect(url_for("admin_panel"))
 
 @app.route("/edit-owner", methods=["GET", "POST"])
@@ -122,10 +137,15 @@ def del_owner():
     id = request.args.get("id")
     if id:
         owner = Owner.query.get(id)
+        owned_spaces = ParkingSpace.query.filter_by(owner=owner).all()
+        for space in owned_spaces:
+            db.session.delete(space)
         db.session.delete(owner)
         db.session.commit()
-        flash(f"Removed {owner.name} as an owner.", "success")
+        flash(f"Removed {owner.name} and {len(owned_spaces)} spaces.", "success")
         return redirect(url_for("admin_panel"))
+
+        
 
     flash(f"Owner does not exist.", "danger")
     return redirect(url_for("admin_panel"))
@@ -180,6 +200,7 @@ def add_space():
             )
             db.session.add(new_space)
             db.session.commit()
+
 
             flash(f"New space added with {owner_name} as owner.", "success")
             return redirect(url_for("admin_panel"))

@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-<ul class="nav nav-tabs">
+
+<!-- Day selection tabs -->
+<ul class="nav nav-tabs mb-5">
     {% for day in days %}
     {% if day == current_day %}
     <li class="nav-item">
@@ -15,55 +17,171 @@
     {% endfor %}
 </ul>
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Parking Space</th>
-            <th scope="col">Owner</th>
-            <th scope="col">Occupied by</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for space in spaces %}
-        {% if space[current_day] != "" %}
-        <tr>
-        {% else %}
-        <tr class="table-success">
-        {% endif %}
-            <th scope="row">{{ space.id }}</th>
-            <td>{{ space.owner.name }}</td>
-            <td>{{ space[current_day] }}</td>
-        {% if space[current_day] != "" %}
-            <td>
-                <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"><button
-                        class="btn btn-primary">Release</button></a>
-            </td>
-        {% else %}
-            <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#name{{ space.id }}"
-                    data-bs-whatever="@getbootstrap">Claim</button></td>
+<div class="row mb-5">
 
-            <div class="modal fade" id="name{{ space.id }}" tabindex="-1" aria-labelledby="name{{ space.id }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="name{{ space.id }}Label">What's your name?</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ url_for('claim_space', id=space.id, day=current_day) }}" method="post">
-                                <div class="mb-3">
-                                    <label for="recipient-name" class="col-form-label">Name:</label>
-                                    <input type="text" class="form-control" id="recipient-name" name="name">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
+    <!-- Driveway block for mobile -->
+    <div class="col-3 d-xxl-none d-flex align-items-stretch">
+        <div class="card bg-light">
+            <div class="card-body text-center align-middle">
+                <p>D</p>
+                <p>R</p>
+                <p>I</p>
+                <p>V</p>
+                <p>E</p>
+                <p>W</p>
+                <p>A</p>
+                <p>Y</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-9 col-xxl-12">
+
+        <div class="row mb-5">
+
+            <!-- Office block for desktop -->
+            <div class="row mb-5 text-center d-none d-xxl-block">
+                <div class="col">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            Office
                         </div>
                     </div>
                 </div>
-        {% endif %}
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
+            </div>
+
+            <!-- Parking spaces -->
+            {% for space in spaces %}
+            <div class="col-9 col-xxl text-center">
+                {% if space[current_day] == "" %}
+                <div class="card spaces text-bg-success mb-3">
+                    {% else %}
+                    <div class="card spaces mb-3">
+                        {% endif %}
+                        <div class="card-body">
+                            {% if space[current_day] == "" %}
+                            <h5 class="card-title text-wrap">Avaliable</h5>
+                            {% else %}
+                            <h5 class="card-title text-wrap">Occupied</h5>
+                            {% endif %}
+                            <p class="card-text text-wrap">{{ space[current_day] }}</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            {% if space[current_day] != "" %}
+                            <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
+                                class="btn btn-primary">Release</a>
+                            {% else %}
+
+                            <button type="button" class="btn btn-light" data-bs-toggle="modal"
+                                data-bs-target="#name{{ space.id }}" data-bs-whatever="@getbootstrap">Claim</button>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Claim space pop-up modal -->
+                <div class="modal fade" id="name{{ space.id }}" tabindex="-1" aria-labelledby="name{{ space.id }}"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="name{{ space.id }}Label">What's your name?</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ url_for('claim_space', id=space.id, day=current_day) }}" method="post">
+                                    <div class="mb-3">
+                                        <label for="recipient-name" class="col-form-label">Name:</label>
+                                        <input type="text" class="form-control" id="recipient-name" name="name">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+            <!-- Driveway block for desktop -->
+            <div class="row mb-5 text-center d-none d-xxl-block">
+                <div class="col">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            Driveway
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driveway block for mobile -->
+        <div class="row mb-5 text-center d-xxl-none">
+            <div class="col">
+                <div class="card bg-light">
+                    <div class="card-body mobile-driveway-text">
+                        Buckhurst Street
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Parking Space</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Occupied by</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for space in spaces %}
+            {% if space[current_day] != "" %}
+            <tr>
+                {% else %}
+            <tr class="table-success">
+                {% endif %}
+                <th scope="row">{{ space.id }}</th>
+                <td>{{ space.owner.name }}</td>
+                <td>{{ space[current_day] }}</td>
+                {% if space[current_day] != "" %}
+                <td>
+                    <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
+                        class="btn btn-primary">Release</a>
+                </td>
+                {% else %}
+                <td><button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#name{{ space.id }}" data-bs-whatever="@getbootstrap">Claim</button>
+                </td>
+
+                <div class="modal fade" id="name{{ space.id }}" tabindex="-1" aria-labelledby="name{{ space.id }}"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="name{{ space.id }}Label">What's your name?</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ url_for('claim_space', id=space.id, day=current_day) }}" method="post">
+                                    <div class="mb-3">
+                                        <label for="recipient-name" class="col-form-label">Name:</label>
+                                        <input type="text" class="form-control" id="recipient-name" name="name">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+
+    {% endblock %}

@@ -1,11 +1,33 @@
 .container-fluid {
-    padding: 5% 15%;
+  padding: 5% 15%;
 }
 
 .navbar .container-fluid {
-    padding: 0% 15%;
+  padding: 0% 15%;
 }
 
-.parking-graphic {
-    width: 100px;
+.card.spaces:hover {
+  transform: scale(1.1);
+  position: initial;
+  z-index: 111;
+  background: #fff;
+}
+
+.card.spaces {
+  height: 150px;
+}
+
+@media screen and (min-width: 1400px) {
+  .card.spaces {
+    height: 200px;
+  }
+}
+
+.card-title {
+  font-size: 1rem;
+}
+
+.mobile-driveway-text {
+  writing-mode: vertical-rl;
+        text-orientation: mixed;
 }
