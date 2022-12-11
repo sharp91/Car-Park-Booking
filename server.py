@@ -153,6 +153,7 @@ def logout():
     return render_template("login.html")
 
 @app.route("/admin-panel")
+@admin_only
 def admin_panel():
     # Pull data to populate page
     users = User.query.all()
@@ -162,6 +163,7 @@ def admin_panel():
 
 
 @app.route("/claim", methods=["GET", "POST"])
+@member_only
 def claim_space():
     # Pull query string params
     day = request.args.get("day")
@@ -182,6 +184,7 @@ def claim_space():
 
 
 @app.route("/release")
+@member_only
 def release_space():
     # Pull query string params
     day = request.args.get("day")
@@ -201,6 +204,7 @@ def release_space():
     return redirect(url_for("home", day=day))
 
 @app.route('/manage', methods=["GET", "POST"])
+@member_only
 def manage_space():
 
     id = request.args.get("id")
@@ -233,6 +237,7 @@ def manage_space():
     return render_template("manage_space.html", days=days)
 
 @app.route("/add-user", methods=["GET", "POST"])
+@admin_only
 def add_user():
 
     if request.method == 'POST':
@@ -264,6 +269,7 @@ def add_user():
     return redirect(url_for("admin_panel"))
 
 @app.route("/edit-user", methods=["GET", "POST"])
+@admin_only
 def edit_user():
 
     id = request.args.get("id")
@@ -278,6 +284,7 @@ def edit_user():
 
 
 @app.route("/delete-user", methods=["GET", "POST"])
+@admin_only
 def del_user():
     id = request.args.get("id")
     if id:
@@ -295,6 +302,7 @@ def del_user():
 
 
 @app.route("/edit-space", methods=["GET", "POST"])
+@admin_only
 def edit_space():
 
     id = request.args.get("id")
@@ -310,6 +318,7 @@ def edit_space():
 
 
 @app.route("/delete-space", methods=["GET", "POST"])
+@admin_only
 def del_space():
     id = request.args.get("id")
     if id:
@@ -325,6 +334,7 @@ def del_space():
 
 
 @app.route("/add-space", methods=["GET", "POST"])
+@admin_only
 def add_space():
 
     if request.method == 'POST':
@@ -357,6 +367,7 @@ def add_space():
 
 
 @app.route("/reset")
+@admin_only
 def reset():
 
     spaces = ParkingSpace.query.all()
