@@ -1,9 +1,13 @@
 .container-fluid {
-  padding: 5% 15%;
+  padding: 2% 10%;
 }
 
 .navbar .container-fluid {
-  padding: 0% 15%;
+  padding: 0% 10%;
+}
+
+.container-login {
+  padding: 0% 30%;
 }
 
 .card.spaces:hover {
@@ -14,8 +18,14 @@
 }
 
 .card.spaces {
-  height: 150px;
+  height:150px;
 }
+
+/* @media screen and (min-width: 1400px) {
+.col-spaces {
+  width: 12.5%;
+}
+} */
 
 @media screen and (min-width: 1400px) {
   .card.spaces {
@@ -24,10 +34,9 @@
 }
 
 .card-title {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .mobile-driveway-text {
-  writing-mode: vertical-rl;
-        text-orientation: mixed;
+  writing-mode: vertical-lr;
 }

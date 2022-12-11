@@ -2,8 +2,28 @@
 {% block content %}
 
 
+<style>
+    @media screen and (min-width: 1400px) {
+        .col-spaces {
+            width: {
+                    {
+                    num_spaces
+                }
+            }
+
+            %;
+        }
+    }
+</style>
+
+<!-- <script type="text/javascript">
+    $(window).on('load', function() {
+        $('#addNewUser').modal('show');
+    });
+</script> -->
+
 <!-- Day selection tabs -->
-<ul class="nav nav-tabs mb-5">
+<ul class="nav nav-tabs mb-5 mt-3">
     {% for day in days %}
     {% if day == current_day %}
     <li class="nav-item">
@@ -22,37 +42,30 @@
     <!-- Driveway block for mobile -->
     <div class="col-3 d-xxl-none d-flex align-items-stretch">
         <div class="card bg-light">
-            <div class="card-body text-center align-middle">
-                <p>D</p>
-                <p>R</p>
-                <p>I</p>
-                <p>V</p>
-                <p>E</p>
-                <p>W</p>
-                <p>A</p>
-                <p>Y</p>
+            <div class="card-body mobile-driveway-text">
+                Driveway
             </div>
         </div>
     </div>
 
-    <div class="col-9 col-xxl-12">
+    <div class="col-9 col-lg-6 col-xxl-12">
 
-        <div class="row mb-5">
-
-            <!-- Office block for desktop -->
-            <div class="row mb-5 text-center d-none d-xxl-block">
-                <div class="col">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            Office
-                        </div>
+        <!-- Office block for desktop -->
+        <div class="row mb-5 text-center d-none d-xxl-block">
+            <div class="col">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        Office
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="row mb-5">
 
             <!-- Parking spaces -->
             {% for space in spaces %}
-            <div class="col-9 col-xxl text-center">
+            <div class="col-9 col-xxl text-center col-spaces">
                 {% if space[current_day] == "" %}
                 <div class="card spaces text-bg-success mb-3">
                     {% else %}
@@ -68,12 +81,20 @@
                         </div>
                         <div class="card-footer text-center">
                             {% if space[current_day] != "" %}
-                            <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
+                                {% if current_user.name == space[current_day] %}
+                                <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
                                 class="btn btn-primary">Release</a>
+                                {% elif current_user.is_admin %}
+                                <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
+                                class="btn btn-primary">Release</a>
+                                {% else %}
+                                <a href="{{ url_for('release_space', id=space.id, day=current_day) }}"
+                                class="btn btn-primary disabled">Release</a>
+                                {% endif %}
                             {% else %}
-
-                            <button type="button" class="btn btn-light" data-bs-toggle="modal"
-                                data-bs-target="#name{{ space.id }}" data-bs-whatever="@getbootstrap">Claim</button>
+                            <!-- <button type="button" class="btn btn-light" data-bs-toggle="modal"
+                                data-bs-target="#name{{ space.id }}" data-bs-whatever="@getbootstrap">Claim</button> -->
+                                <a href="{{ url_for('claim_space', id=space.id, day=current_day) }}" class="btn btn-light">Claim</a>
                             {% endif %}
                         </div>
 
@@ -120,7 +141,7 @@
         <div class="row mb-5 text-center d-xxl-none">
             <div class="col">
                 <div class="card bg-light">
-                    <div class="card-body mobile-driveway-text">
+                    <div class="card-body">
                         Buckhurst Street
                     </div>
                 </div>
@@ -145,7 +166,7 @@
             <tr class="table-success">
                 {% endif %}
                 <th scope="row">{{ space.id }}</th>
-                <td>{{ space.owner.name }}</td>
+                <td>{{ space.user.name }}</td>
                 <td>{{ space[current_day] }}</td>
                 {% if space[current_day] != "" %}
                 <td>

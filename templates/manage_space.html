@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="modal-dialog modal-dialog-centered container-login">
+    <h1 class="display-1">{{ current_user.name }}'s space.</h1>
+</div>
+
+{% for space in current_user.parking_spaces %}
+<div class="modal-dialog modal-dialog-centered container-login mb-3">
+    <div class="modal-content">
+        <div class="modal-body bg-light ps-5 pe-5 pt-5">
+            <h5 class="display-5">Space {{ space.id }}</h1>
+                <p>Select the days you are using your space.</p>
+                <form action="{{ url_for('manage_space', id=space.id) }}" method="post">
+                    {% for day in days %}
+                    <div class="form-check">
+                        {% if space[day] == "" %}
+                        <input class="form-check-input" type="checkbox" value="{{ day }}" id="flexCheckDefault"
+                            name="{{ day }}">
+                        {% else %}
+                        <input class="form-check-input" type="checkbox" value="{{ day }}" id="flexCheckDefault"
+                            name="{{ day }}" checked>
+                        {% endif %}
+                        <label class="form-check-label" for="flexCheckDefault">
+                            {{ day.capitalize() }}
+                        </label>
+
+                    </div>
+
+
+
+                    {% endfor %}
+                    <!-- <div class="modal-footer"> -->
+                    <button type="submit" class="btn btn-primary text-center mb-5 mt-2">Update</button>
+                    <!-- </div> -->
+                </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

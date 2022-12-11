@@ -32,14 +32,29 @@
 
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav ms-auto">
+
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('manage_space') }}">Manage Space</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated and current_user.is_admin %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Admin
                         </a>
                         <ul class="dropdown-menu">
-                            <!-- <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewOwner"
-                                    data-bs-whatever="@getbootstrap">Add Owner</a></li>
+                            <!-- <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewuser"
+                                    data-bs-whatever="@getbootstrap">Add user</a></li>
                             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addNewSpace"
                                     data-bs-whatever="@getbootstrap">Add Space</a></li> -->
                             <li><a class="dropdown-item" href="{{ url_for('reset') }}">Reset</a></li>
@@ -49,12 +64,14 @@
                             <li><a class="dropdown-item" href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
                         </ul>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
 
     <main>
+
         <div class="container-fluid">
 
             {% for category, message in get_flashed_messages(with_categories=True) %}
@@ -63,30 +80,41 @@
             </div>
             {% endfor %}
 
+
+
+
             {% block content %}
             {% endblock %}
-            
-            <!-- Add new owner pop-up -->
-            <div class="modal fade" id="addNewOwner" tabindex="-1" aria-labelledby="addNewOwner" aria-hidden="true">
+
+            <!-- Add new user pop-up -->
+            <div class="modal fade" id="addNewUser" tabindex="-1" aria-labelledby="addNewUser" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="addNewOwnerLabel">Add a new owner.</h1>
+                            <h1 class="modal-title fs-5" id="addNewUserLabel">Add a new user.</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ url_for('add_owner') }}" method="post">
+                            <form action="{{ url_for('add_user') }}" method="post">
                                 <div class="mb-3">
-                                    <label for="new-owner-name" class="col-form-label">Name:</label>
-                                    <input type="text" class="form-control" id="new-owner-name" name="new-owner-name">
+                                    <label for="new-user-name" class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="new-user-name" name="new-user-name"
+                                        required>
                                 </div>
 
-                                <div class="form-check pb-2">
-                                    <input class="form-check-input" type="checkbox" value="createspace" id="flexCheckDefault" name="createspace" checked>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Email" aria-label="Email"
+                                        aria-describedby="new-user-email" name="new-user-email" required>
+                                    <span class="input-group-text" id="new-user-email">@email.com.au</span>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="createspace"
+                                        id="flexCheckDefault" name="createspace" checked>
                                     <label class="form-check-label" for="flexCheckDefault">
-                                      Create a space for the new owner?
+                                        Create a space for the new user?
                                     </label>
-                                  </div>
+                                </div>
 
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Add</button>
@@ -108,19 +136,19 @@
                         <div class="modal-body">
                             <form action="{{ url_for('add_space') }}" method="post">
                                 <div class="mb-3">
-                                    <p>If owner is not listed, please add new.</p>
-                                    <select class="form-select" aria-label="Default select example" name="owner_select">
+                                    <p>If user is not listed, please add new.</p>
+                                    <select class="form-select" aria-label="Default select example" name="user_select">
                                         <option selected>Who owns this space?</option>
 
-                                        {% for owner in owners %}
-                                        <option value="{{ owner.name }}">{{ owner.name }}</option>
+                                        {% for user in users %}
+                                        <option value="{{ user.name }}">{{ user.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#addNewOwner" data-bs-whatever="@getbootstrap">Add
-                                        Owner</button>
+                                        data-bs-target="#addNewuser" data-bs-whatever="@getbootstrap">Add
+                                        user</button>
                                     <button type="submit" class="btn btn-primary">Add</button>
                                 </div>
                             </form>

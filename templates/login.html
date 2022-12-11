@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="modal-dialog modal-dialog-centered container-login">
+    <div class="modal-content">
+        <div class="modal-body">
+            <h1 class="display-1">Login</h1>
+            <p>Enter your work email to login.</p>
+            <form action="{{ url_for('login') }}" method="post">
+
+                <!-- <div class="mb-3">
+                    <label for="user-name" class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="user-name" name="user-name"  required>
+                </div> -->
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="user-email" name="user-email"  required>
+                    <span class="input-group-text" id="user-email">@email.com.au</span>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

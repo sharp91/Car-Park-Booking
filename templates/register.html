@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="modal-dialog modal-dialog-centered container-login">
+    <div class="modal-content">
+        <div class="modal-body">
+            <h1 class="display-1">Register</h1>
+            <p>Enter your name and work email.</p>
+            <form action="{{ url_for('register') }}" method="post">
+                <div class="mb-3">
+                    <label for="new-user-name" class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="new-user-name" name="new-user-name" required>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Email" aria-label="Email"
+                        aria-describedby="new-user-email" name="new-user-email" required>
+                    <span class="input-group-text" id="new-user-email">@email.com.au</span>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
