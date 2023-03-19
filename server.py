@@ -3,7 +3,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import json
 
@@ -73,14 +73,34 @@ class ParkingSpace(db.Model):
 days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
 
 def send_teams_msg(message):
-    data = {
-        "message": message
-    }
-    requests.post(zapier_webhook, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+    return
+    # data = {
+    #     "message": message
+    # }
+    # requests.post(zapier_webhook, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+
+def get_weeks_dates(monday):
+
+    dates = {day: monday + timedelta(days = i) for i, day in enumerate(days)}
+    # for key, value in dates.items():
+    #     print(key, value)
+    return dates
+
+    # for i, day in enumerate(days):
+    #     print(day)
+    #     print(monday + timedelta(days = i))
+
+
+
 
 @app.route("/")
 @member_only
 def home():
+
+    today = datetime.today()
+    week_commencing = today - timedelta(days = today.weekday())
+
+    current_week = get_weeks_dates(week_commencing)
 
     # Set the currently selected day for tabs
     if request.args.get("day"):
@@ -104,7 +124,7 @@ def home():
         flash(f"There's currently no spaces avaliable on { current_day.capitalize()}", "warning")
     
     # Render page
-    return render_template("index.html", spaces=spaces, users=users, days=days, current_day=current_day, num_spaces=num_spaces)
+    return render_template("index.html", spaces=spaces, users=users, days=days, current_day=current_day, num_spaces=num_spaces, current_week=current_week)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():

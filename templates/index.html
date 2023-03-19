@@ -16,11 +16,19 @@
     }
 </style>
 
-<!-- <script type="text/javascript">
-    $(window).on('load', function() {
-        $('#addNewUser').modal('show');
-    });
-</script> -->
+<nav aria-label="...">
+    <ul class="pagination">
+      <li class="page-item disabled">
+        <a class="page-link">Previous</a>
+      </li>
+      <li class="page-item active" aria-current="page">
+        <a class="page-link" href="#">{{ current_week["monday"] }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+</nav>
 
 <!-- Day selection tabs -->
 <ul class="nav nav-tabs mb-5 mt-3">
